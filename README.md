@@ -7,8 +7,8 @@ site: [link](https://obxd.github.io/roadinator-web/)
 
 *run localy*:  
 ```
-git clone [this repo]
-cd [this repo]
+git clone https://github.com/obxd/roadinator-web
+cd roadinator-web
 npm install
 npm start
 ```
