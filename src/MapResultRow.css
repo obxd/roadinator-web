@@ -1,0 +1,18 @@
+.component-map-result-row {
+  border-bottom: 1px solid #ccc;
+  padding: 10px;
+  height: 32px;
+  position: relative;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  cursor: pointer;
+}
+
+.component-map-result-row:hover {
+  background-color: #eee;
+}
+
+.component-map-result-row .title {
+  position: relative;
+  top: -8px;
+}
+
