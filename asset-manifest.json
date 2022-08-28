@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/roadinator-web/static/css/main.74f294d4.css",
-    "main.js": "/roadinator-web/static/js/main.c275d898.js",
+    "main.js": "/roadinator-web/static/js/main.495aaaed.js",
     "index.html": "/roadinator-web/index.html",
     "main.74f294d4.css.map": "/roadinator-web/static/css/main.74f294d4.css.map",
-    "main.c275d898.js.map": "/roadinator-web/static/js/main.c275d898.js.map"
+    "main.495aaaed.js.map": "/roadinator-web/static/js/main.495aaaed.js.map"
   },
   "entrypoints": [
     "static/css/main.74f294d4.css",
-    "static/js/main.c275d898.js"
+    "static/js/main.495aaaed.js"
   ]
 }
