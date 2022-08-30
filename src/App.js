@@ -6,6 +6,8 @@ import MapResults from "./MapResults";
 import filterMaps from "./filterMaps";
 import Description from "./Description";
 import Switch from "./Switch";
+import Waifu from './Waifu';
+import Nowaifu from './Nowaifu';
 import "./App.css";
 
 export default class App extends PureComponent {
@@ -13,9 +15,11 @@ export default class App extends PureComponent {
     super(props);
 
     const isDark = JSON.parse(localStorage.getItem("isDark"));
+    const isNoWaifus = JSON.parse(localStorage.getItem("waifu"));
 
     this.state = {
       darkTheme : isDark !== null ? isDark : false,
+      noWaifus: isNoWaifus !== null ? isNoWaifus : false,
       filteredMaps: filterMaps("", 20),
       description:  {}
     };
@@ -42,18 +46,34 @@ export default class App extends PureComponent {
     });
   }
 
+  toggleNowaifu = (isNoWaifus) =>{
+    localStorage.setItem("waifu",!isNoWaifus);
+    console.log(`setting no waifu to :${!isNoWaifus}`);
+    this.setState({
+      noWaifus : !isNoWaifus
+    });
+  }
+
   render() {
     return (
       <div className="fill-window" id={this.state.darkTheme ? "dark":"light"}>
 
         <Header />
+        <div className="nowaifu-container">
+          <Nowaifu 
+              isOn={this.state.noWaifus}
+              handleToggle={this.toggleNowaifu}
+          />
+        </div>
         <div className="switch-container">
           <Switch
             isOn={this.state.darkTheme}
             handleToggle={this.toggleTheme}
           />
         </div>
-
+        { !this.state.noWaifus &&
+          <Waifu/>
+        }
         <SearchInput textChange={this.handleSearchChange} />
         <div className="pane">
         <Container>

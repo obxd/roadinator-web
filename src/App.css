@@ -21,9 +21,13 @@
   position: absolute;
   top: 2px;
   right: 16px;
-  font-size: 18px;
 }
 
+.nowaifu-container {
+  position: absolute;
+  top: 14px;
+  right: 80px;
+}
 
 .pane{
   min-width: 30% !important;
