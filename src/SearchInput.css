@@ -1,5 +1,7 @@
 .component-search-input {
-  border-bottom: 1px solid #ccc;
+  width: 35%;
+  margin-top: 5em;
+  margin-left: 1em;
 }
 
 .component-search-input > div {
@@ -14,3 +16,9 @@
   padding: 10px 8px;
   width: 100%;
 }
+
+#dark .component-search-input input{
+  background-color: #282a2e;
+  color: #bbb;
+}
+

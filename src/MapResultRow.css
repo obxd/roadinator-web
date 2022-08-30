@@ -11,8 +11,13 @@
   background-color: #eee;
 }
 
+#dark .component-map-result-row:hover {
+  background-color: #707880;
+}
+
 .component-map-result-row .title {
   position: relative;
   top: -8px;
 }
+
 

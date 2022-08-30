@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
-import "./MapResultRow.css";
+import "./Description.css";
 
 export default class Description extends PureComponent {
   static propTypes = {
@@ -27,7 +27,7 @@ export default class Description extends PureComponent {
           </thead>
         <tbody>
           {this.props.map.data.components.map( (component,index) => (
-            <tr bgcolor = {component.bgcolor} key={index}>
+            <tr className = {component.bgcolor} key={index}>
               <td>{component.type}</td>
               <td>{component.size}</td>
               <td>{component.tier}</td>

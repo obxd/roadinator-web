@@ -256,18 +256,18 @@ def sort_key(component :Component) -> int:
 
 def color_for_component(component: Component):
     if "Green" in component.type:
-        return "#affa1f"
+        return "green"
     elif "Blue" in component.type:
-        return "#0d8cff"
+        return "blue"
     elif "Gold" in component.type:
-        return "#f2f50f"
+        return "yellow"
     elif "Dungeon" in component.type:
         if "Solo" == component.size:
-            return "#affa1f"
+            return "green"
         elif "Group" == component.size:
-            return "#0d8cff"
+            return "blue"
         elif "Raid" == component.size:
-            return "#f2f50f"
+            return "yellow"
     return None
 
 

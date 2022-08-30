@@ -5,11 +5,17 @@ import SearchInput from "./SearchInput";
 import MapResults from "./MapResults";
 import filterMaps from "./filterMaps";
 import Description from "./Description";
+import Switch from "./Switch";
+import "./App.css";
 
 export default class App extends PureComponent {
   constructor(props) {
     super(props);
+
+    const isDark = JSON.parse(localStorage.getItem("isDark"));
+
     this.state = {
+      darkTheme : isDark !== null ? isDark : false,
       filteredMaps: filterMaps("", 20),
       description:  {}
     };
@@ -29,24 +35,39 @@ export default class App extends PureComponent {
     });
   };
 
+  toggleTheme = (isDark) =>{
+    localStorage.setItem("isDark",!isDark);
+    this.setState({
+      darkTheme: !isDark
+    });
+  }
+
   render() {
     return (
-      <div>
-      <Header />
-      <SearchInput textChange={this.handleSearchChange} />
-      <Container>
-        <Row>
-          <Col>
-            <MapResults mapsData={this.state.filteredMaps} onSelection={this.handleSelection} />
-          </Col>
-          <Col>
-            <Description map={this.state.description} />
-          </Col>
-        </Row>
-      </Container>
+      <div className="fill-window" id={this.state.darkTheme ? "dark":"light"}>
+
+        <Header />
+        <div className="switch-container">
+          <Switch
+            isOn={this.state.darkTheme}
+            handleToggle={this.toggleTheme}
+          />
+        </div>
+
+        <SearchInput textChange={this.handleSearchChange} />
+        <div className="pane">
+        <Container>
+          <Row>
+            <Col>
+              <MapResults mapsData={this.state.filteredMaps} onSelection={this.handleSelection} />
+            </Col>
+            <Col>
+              <Description map={this.state.description} />
+            </Col>
+          </Row>
+        </Container>
+        </div>
       </div>
     );
   }
 }
-
-

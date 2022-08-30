@@ -1,0 +1,22 @@
+.transparent > td{
+  background-color:"transparent";
+}
+.green > td{
+  background-color: #AFFA1F;
+}
+#dark .green > td{
+  background-color: #14452f;
+}
+.blue > td{
+  background-color: #0D8CFF;
+}
+#dark .blue > td{
+  background-color: #00115e;
+}
+.yellow > td{
+  background-color: #F2F50F;
+}
+#dark .yellow > td {
+  background-color: #7e5920;
+}
+

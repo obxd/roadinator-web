@@ -6,7 +6,7 @@ import "./MapResultRow.css";
 export default class MapResultsRow extends PureComponent {
   static propTypes = {
     name: PropTypes.string,
-    matches: PropTypes.array,
+    matches: PropTypes.object,
     data: PropTypes.object,
     onSelection: PropTypes.func
   };
