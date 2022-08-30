@@ -48,7 +48,6 @@ export default class App extends PureComponent {
 
   toggleNowaifu = (isNoWaifus) =>{
     localStorage.setItem("waifu",!isNoWaifus);
-    console.log(`setting no waifu to :${!isNoWaifus}`);
     this.setState({
       noWaifus : !isNoWaifus
     });
