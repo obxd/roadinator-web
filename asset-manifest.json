@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/roadinator-web/static/css/main.ba834ec9.css",
-    "main.js": "/roadinator-web/static/js/main.537bc86c.js",
+    "main.css": "/roadinator-web/static/css/main.c3e5fec1.css",
+    "main.js": "/roadinator-web/static/js/main.7ce25024.js",
     "static/media/aqua.png": "/roadinator-web/static/media/aqua.58038e822578d8f54383.png",
     "static/media/Kurisu_Makise.png": "/roadinator-web/static/media/Kurisu_Makise.0d918c732121f3114854.png",
     "static/media/Asuka.png": "/roadinator-web/static/media/Asuka.28bee2012287cc87c856.png",
@@ -11,11 +11,11 @@
     "static/media/Yuuki_Asuna.png": "/roadinator-web/static/media/Yuuki_Asuna.dd8b6b72443208b11324.png",
     "static/media/Yoko_Littner.png": "/roadinator-web/static/media/Yoko_Littner.a39968ea0eefa24da89e.png",
     "index.html": "/roadinator-web/index.html",
-    "main.ba834ec9.css.map": "/roadinator-web/static/css/main.ba834ec9.css.map",
-    "main.537bc86c.js.map": "/roadinator-web/static/js/main.537bc86c.js.map"
+    "main.c3e5fec1.css.map": "/roadinator-web/static/css/main.c3e5fec1.css.map",
+    "main.7ce25024.js.map": "/roadinator-web/static/js/main.7ce25024.js.map"
   },
   "entrypoints": [
-    "static/css/main.ba834ec9.css",
-    "static/js/main.537bc86c.js"
+    "static/css/main.c3e5fec1.css",
+    "static/js/main.7ce25024.js"
   ]
 }
