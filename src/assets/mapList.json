@@ -1,0 +1,48 @@
+[
+  {
+    "name": "ouyos-aoeuam",
+    "mapdata": {
+      "type": "L1 Royal",
+      "tier": "4",
+      "image": "https://cdn.albiononline2d.com/game-images/4339_WRL_MN_AUTO_T7_UND_OUT_Q2.png",
+      "size": "1000 1000",
+      "components": [
+        {
+          "type": "chest",
+          "color": "blue",
+          "size": "big",
+          "tier": "4",
+          "pos": "500 500"
+        },
+        {
+          "type": "chest",
+          "color": "green",
+          "size": "small",
+          "tier": "4",
+          "pos": "500 500"
+        },
+        {
+          "type": "chest",
+          "bgcolor": "green",
+          "size": "small",
+          "tier": "4",
+          "pos": "500 500"
+        },
+        {
+          "type": "dungeon",
+          "color": "blue",
+          "size": "kpr",
+          "tier": "4",
+          "pos": "500 500"
+        },
+        {
+          "type": "dungeon",
+          "bgcolor": "green",
+          "size": "her",
+          "tier": "4",
+          "pos": "500 500"
+        }
+      ]
+    }
+  }
+]
