@@ -61,7 +61,7 @@ const Roads = observer(() => {
                         <tr
                           key={index}
                           className={`border border-black dark:border-gray-500 ${
-                            getRowColor(item.bgcolor)
+                            getRowColor(item.bgcolor, item.type)
                           }`}
                         >
                           <td className="border border-black dark:border-gray-500 p-1">{item.type}</td>
@@ -94,7 +94,9 @@ function getSortedComponents(components: any[]) {
 }
 
 // Function to get row colors in light & dark mode
-function getRowColor(bgcolor: string) {
+function getRowColor(bgcolor: string, item_type: string) {
+  if (item_type === "mistscity")
+    return "bg-fuchsia-300 dark:bg-fuchsia-600 text-black dark:text-white"
   switch (bgcolor.toLowerCase()) {
     case "gold":
       return "bg-yellow-300 dark:bg-yellow-600 text-black dark:text-white";
