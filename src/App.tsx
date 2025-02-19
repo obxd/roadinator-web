@@ -1,6 +1,7 @@
 import Header from "./components/header/header";
 import Waifu from "./components/waifu/waifu";
 import Roads from "./components/roads/roads";
+import GuidePane from "./components/guidepane/guidepane";
 
 function App() {
   return (
@@ -9,6 +10,7 @@ function App() {
         <Header />
         <Waifu />
         <Roads />
+        <GuidePane /> 
       </div>
     </>
   );
