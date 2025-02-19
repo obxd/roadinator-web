@@ -43,9 +43,6 @@ const Roads = observer(() => {
               <p>
                 <strong>Road type:</strong> {mapsStore.selectedRoad.data.type}
               </p>
-              <p>
-                <strong>Tier:</strong> {mapsStore.selectedRoad.data.tier}
-              </p>
 
               {/* Responsive Loot Table */}
               {mapsStore.selectedRoad.data.components && (
