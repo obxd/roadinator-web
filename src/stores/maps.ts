@@ -1,18 +1,19 @@
 import { makeAutoObservable } from "mobx";
 import { Fzf } from "fzf";
 import mapList from "../assets/mapList.json";
+import type { Road, FilteredRoad } from "../types/road";
 
 const MAX_FILTERED = 15;
 
 class MapsStore {
   textField = "";
-  filteredResults: any[] = [];
-  selectedRoad: any | null = null;
-  private fzf;
+  filteredResults: FilteredRoad[] = [];
+  selectedRoad: FilteredRoad | null = null;
+  private fzf: Fzf<Road>;
 
   constructor() {
     makeAutoObservable(this);
-    this.fzf = new Fzf(mapList, {
+    this.fzf = new Fzf(mapList as Road[], {
       selector: (item) => MapsStore.normalizeString(item.name),
     });
   }
@@ -39,7 +40,7 @@ class MapsStore {
     if(this.filteredResults) this.selectRoad(this.filteredResults[0]);
   }
 
-  selectRoad(road: any) {
+  selectRoad(road: FilteredRoad) {
     this.selectedRoad = road;
   }
 

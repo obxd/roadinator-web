@@ -1,7 +1,8 @@
 import { observer } from "mobx-react-lite";
 import { mapsStore } from "../../stores/maps";
 import { waifuStore } from "../../stores/waifu";
-import { darkModeStore } from "../../stores/darkmode"; // Import dark mode store
+import { darkModeStore } from "../../stores/darkmode";
+import type { RoadComponent } from "../../types/road";
 
 const Roads = observer(() => {
   return (
@@ -57,7 +58,7 @@ const Roads = observer(() => {
                       </tr>
                     </thead>
                     <tbody>
-                      {getSortedComponents(mapsStore.selectedRoad.data.components).map((item: any, index: number) => (
+                      {getSortedComponents(mapsStore.selectedRoad.data.components).map((item, index) => (
                         <tr
                           key={index}
                           className={`border border-black dark:border-gray-500 ${
@@ -83,7 +84,7 @@ const Roads = observer(() => {
 });
 
 // Function to sort components
-function getSortedComponents(components: any[]) {
+function getSortedComponents(components: RoadComponent[]) {
   return [...components].sort((a, b) => {
     // Prioritize "mistcity" first
     if (a.type === "mistscity" && b.type !== "mistscity") return -1;
