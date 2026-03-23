@@ -82,6 +82,29 @@ const Roads = observer(() => {
         placeholder="Search roads..."
       />
 
+      <div className="flex flex-wrap gap-2 mt-2">
+        <select
+          value={mapsStore.selectedType}
+          onChange={(e) => mapsStore.setTypeFilter(e.target.value)}
+          className="px-2 py-1 text-sm rounded bg-white dark:bg-zinc-800 dark:text-white border"
+        >
+          <option value="">All Types</option>
+          {mapsStore.roadTypes.map((type) => (
+            <option key={type} value={type}>{type}</option>
+          ))}
+        </select>
+        <select
+          value={mapsStore.selectedTier}
+          onChange={(e) => mapsStore.setTierFilter(e.target.value)}
+          className="px-2 py-1 text-sm rounded bg-white dark:bg-zinc-800 dark:text-white border"
+        >
+          <option value="">All Tiers</option>
+          {mapsStore.roadTiers.map((tier) => (
+            <option key={tier} value={tier}>Tier {tier}</option>
+          ))}
+        </select>
+      </div>
+
       {!mapsStore.textField && (
         <div className="mt-8 text-center text-gray-600 dark:text-gray-400">
           <div className="text-6xl mb-4">🗺️</div>

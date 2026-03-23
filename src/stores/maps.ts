@@ -5,22 +5,44 @@ import type { Road, FilteredRoad } from "../types/road";
 
 const MAX_FILTERED = 15;
 
+const ROAD_TYPES = Array.from(
+  new Set((mapList as Road[]).map((r) => r.data.type))
+).sort();
+
+const ROAD_TIERS = Array.from(
+  new Set((mapList as Road[]).map((r) => r.data.tier))
+).sort();
+
 class MapsStore {
   textField = "";
   filteredResults: FilteredRoad[] = [];
   selectedRoad: FilteredRoad | null = null;
+  selectedType = "";
+  selectedTier = "";
+  roadTypes = ROAD_TYPES;
+  roadTiers = ROAD_TIERS;
   private fzf: Fzf<Road>;
+  private allRoads: Road[];
 
   constructor() {
     makeAutoObservable(this);
-    this.fzf = new Fzf(mapList as Road[], {
+    this.allRoads = mapList as Road[];
+    this.fzf = new Fzf(this.allRoads, {
       selector: (item) => MapsStore.normalizeString(item.name),
     });
   }
 
-  setTextField(value: string) {
-    this.textField = value;
+  setTypeFilter(type: string) {
+    this.selectedType = type;
+    this.applyFilters();
+  }
 
+  setTierFilter(tier: string) {
+    this.selectedTier = tier;
+    this.applyFilters();
+  }
+
+  private applyFilters() {
     if (this.textField.trim().length === 0) {
       this.filteredResults = [];
       this.selectedRoad = null;
@@ -28,16 +50,31 @@ class MapsStore {
     }
 
     const normalizedSearch = MapsStore.normalizeString(this.textField);
+    let results = this.fzf.find(normalizedSearch).map((res) => ({
+      ...res.item,
+      matches: res.positions,
+    }));
 
-    this.filteredResults = this.fzf
-      .find(normalizedSearch)
-      .slice(0, MAX_FILTERED)
-      .map((res) => ({
-        ...res.item,
-        matches: res.positions,
-      }));
-      
-    if(this.filteredResults) this.selectRoad(this.filteredResults[0]);
+    if (this.selectedType) {
+      results = results.filter((r) => r.data.type === this.selectedType);
+    }
+
+    if (this.selectedTier) {
+      results = results.filter((r) => r.data.tier === this.selectedTier);
+    }
+
+    this.filteredResults = results.slice(0, MAX_FILTERED);
+
+    if (this.filteredResults.length > 0) {
+      this.selectRoad(this.filteredResults[0]);
+    } else {
+      this.selectedRoad = null;
+    }
+  }
+
+  setTextField(value: string) {
+    this.textField = value;
+    this.applyFilters();
   }
 
   selectRoad(road: FilteredRoad) {
