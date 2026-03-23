@@ -114,82 +114,103 @@
         </div>
       )}
 
-      {mapsStore.textField && mapsStore.filteredResults.length === 0 && (
-        <div className="mt-8 text-center text-gray-600 dark:text-gray-400">
-          <div className="text-4xl mb-4">🔍</div>
-          <p className="text-lg">No roads found</p>
-          <p className="text-sm mt-2 opacity-75">Try a different search term</p>
-        </div>
-      )}
-
-      {mapsStore.textField && mapsStore.filteredResults.length > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
-          {/* Left Column: Search Results */}
-          <ul className="p-2 rounded-md bg-pink-400 dark:bg-zinc-700">
-            {mapsStore.filteredResults.map((road, index) => (
-              <li
-                key={road.name}
-                className={`p-2 border-b cursor-pointer transition-colors ${
-                  index === selectedIndex
-                    ? "bg-pink-600 dark:bg-zinc-500"
-                    : "hover:bg-pink-500 dark:hover:bg-zinc-600"
-                }`}
-                onClick={() => {
-                  setSelectedIndex(index);
-                  mapsStore.selectRoad(road);
-                }}
-              >
-                {highlightText(road.name, road.matches)}
-              </li>
-            ))}
-          </ul>
-
-          {/* Right Column: Selected Road Details */}
-          {mapsStore.selectedRoad && (
-            <div className="p-4 rounded-md shadow-md bg-pink-200 dark:bg-zinc-800">
-              <div className="flex items-center gap-2">
-                <h2 className="text-xl font-bold">{mapsStore.selectedRoad.name}</h2>
-                <button
-                  onClick={() => handleCopyName(mapsStore.selectedRoad!.name)}
-                  className="px-2 py-1 text-xs rounded bg-pink-400 dark:bg-zinc-600 
-                           hover:bg-pink-500 dark:hover:bg-zinc-500 transition-colors"
-                  title="Copy road name"
-                >
-                  {copied ? "Copied!" : "Copy"}
-                </button>
+          {mapsStore.textField && mapsStore.filteredResults.length > 0 && (
+            <div className="mt-8 text-center text-gray-600 dark:text-gray-400">
+              <div className="text-4xl mb-4">🔍</div>
+              <p className="text-lg">No roads found</p>
+              <p className="text-sm mt-2 opacity-75">Try a different search term</p>
+              
+              <div className="mt-4">
+                <h3 className="text-sm font-bold mb-2">Filter by resources:</h3>
+                <div className="flex flex-wrap gap-1">
+                  {mapsStore.resourceTypes.map((resource) => (
+                    <button
+                      key={resource}
+                      onClick={() => mapsStore.toggleResourceFilter(resource)}
+                      className={`px-2 py-1 text-xs rounded transition-colors ${
+                        mapsStore.selectedResources.includes(resource)
+                          ? "bg-pink-500 dark:bg-zinc-500 text-white"
+                          : "bg-pink-400 dark:bg-zinc-600 hover:bg-pink-500 dark:hover:bg-zinc-500"
+                      }`}
+                    >
+                      {resource}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <p>
-                <strong>Road type:</strong> {mapsStore.selectedRoad.data.type}
-              </p>
+            </div>
+          )}
 
-              {/* Responsive Loot Table */}
-              {mapsStore.selectedRoad.data.components && (
-                <div className="max-w-full overflow-auto">
-                  <table className="mt-4 w-full border-collapse border border-black dark:border-gray-500 text-sm">
-                    <thead>
-                      <tr className="bg-pink-400 dark:bg-zinc-700">
-                        <th className="border border-black dark:border-gray-500 p-1 whitespace-nowrap">Type</th>
-                        <th className="border border-black dark:border-gray-500 p-1 whitespace-nowrap">Size</th>
-                        <th className="border border-black dark:border-gray-500 p-1 whitespace-nowrap">Tier</th>
-                        <th className="border border-black dark:border-gray-500 p-1 whitespace-nowrap">Color</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {getSortedComponents(mapsStore.selectedRoad.data.components).map((item, index) => (
-                        <tr
-                          key={index}
-                          className={`border border-black dark:border-gray-500 ${
-                            getRowColor(item.bgcolor, item.type)
-                          }`}
-                        >
-                          <td className="border border-black dark:border-gray-500 p-1">{item.type}</td>
-                          <td className="border border-black dark:border-gray-500 p-1">{item.size}</td>
-                          <td className="border border-black dark:border-gray-500 p-1">{item.tier}</td>
-                          <td className="border border-black dark:border-gray-500 p-1">{item.bgcolor}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+          {mapsStore.textField && mapsStore.filteredResults.length > 0 && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+              {/* Left Column: Search Results */}
+              <ul className="p-2 rounded-md bg-pink-400 dark:bg-zinc-700">
+                {mapsStore.filteredResults.map((road, index) => (
+                  <li
+                    key={road.name}
+                    className={`p-2 border-b cursor-pointer transition-colors ${
+                      index === selectedIndex
+                        ? "bg-pink-600 dark:bg-zinc-500"
+                        : "hover:bg-pink-500 dark:hover:bg-zinc-600"
+                    }`}
+                    onClick={() => {
+                      setSelectedIndex(index);
+                      mapsStore.selectRoad(road);
+                    }}
+                  >
+                    {highlightText(road.name, road.matches)}
+                  </li>
+                ))}
+              </ul>
+
+              {/* Right Column: Selected Road Details */}
+              {mapsStore.selectedRoad && (
+                <div className="p-4 rounded-md shadow-md bg-pink-200 dark:bg-zinc-800">
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-xl font-bold">{mapsStore.selectedRoad.name}</h2>
+                    <button
+                      onClick={() => handleCopyName(mapsStore.selectedRoad!.name)}
+                      className="px-2 py-1 text-xs rounded bg-pink-400 dark:bg-zinc-600 
+                               hover:bg-pink-500 dark:hover:bg-zinc-500 transition-colors"
+                      title="Copy road name"
+                    >
+                      {copied ? "Copied!" : "Copy"}
+                    </button>
+                  </div>
+                  <p>
+                    <strong>Road type:</strong> {mapsStore.selectedRoad.data.type}
+                  </p>
+
+                  {/* Responsive Loot Table */}
+                  {mapsStore.selectedRoad.data.components && (
+                    <div className="max-w-full overflow-auto">
+                      <table className="mt-4 w-full border-collapse border border-black dark:border-gray-500 text-sm">
+                        <thead>
+                          <tr className="bg-pink-400 dark:bg-zinc-700">
+                            <th className="border border-black dark:border-gray-500 p-1 whitespace-nowrap">Type</th>
+                            <th className="border border-black dark:border-gray-500 p-1 whitespace-nowrap">Size</th>
+                            <th className="border border-black dark:border-gray-500 p-1 whitespace-nowrap">Tier</th>
+                            <th className="border border-black dark:border-gray-500 p-1 whitespace-nowrap">Color</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {getSortedComponents(mapsStore.selectedRoad.data.components).map((item, index) => (
+                            <tr
+                              key={index}
+                              className={`border border-black dark:border-gray-500 ${
+                                getRowColor(item.bgcolor, item.type)
+                              }`}
+                            >
+                              <td className="border border-black dark:border-gray-500 p-1">{item.type}</td>
+                              <td className="border border-black dark:border-gray-500 p-1">{item.size}</td>
+                              <td className="border border-black dark:border-gray-500 p-1">{item.tier}</td>
+                              <td className="border border-black dark:border-gray-500 p-1">{item.bgcolor}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
