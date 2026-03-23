@@ -29,24 +29,6 @@ const Roads = observer(() => {
     }
   }, []);
 
-  const handleExportData = useCallback(() => {
-    const data = mapsStore.filteredResults.map((road) => ({
-      name: road.name,
-      type: road.data.type,
-      tier: road.data.tier,
-      components: road.data.components,
-    }));
-    const blob = new Blob([JSON.stringify(data, null, 22)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `roads_export_${new Date().toISOString().replace(/:/g, "_")}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }, []);
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);
@@ -136,15 +118,6 @@ const Roads = observer(() => {
             <option key={tier} value={tier}>Tier {tier}</option>
           ))}
         </select>
-        {mapsStore.textField && mapsStore.filteredResults.length > 0 && (
-          <button
-            onClick={handleExportData}
-            className="px-2 py-1 text-xs rounded bg-pink-400 dark:bg-zinc-600 hover:bg-pink-500 dark:hover:bg-zinc-500"
-            aria-label="Export search results as JSON"
-          >
-            Export
-          </button>
-        )}
       </div>
 
       {!mapsStore.textField && (
@@ -245,14 +218,6 @@ const Roads = observer(() => {
                   aria-label="Copy road name to clipboard"
                 >
                   {copied ? "Copied!" : "Copy"}
-                </button>
-                <button
-                  onClick={() => mapsStore.toggleCompare(mapsStore.selectedRoad!)}
-                  className="px-2 py-1 text-xs rounded bg-pink-400 dark:bg-zinc-600 
-                           hover:bg-pink-500 dark:hover:bg-zinc-500"
-                  aria-label="Add to comparison"
-                >
-                  Compare
                 </button>
               </div>
               <p>

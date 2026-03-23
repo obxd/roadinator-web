@@ -19,7 +19,6 @@ class MapsStore {
   textField = "";
   filteredResults: FilteredRoad[] = [];
   selectedRoad: FilteredRoad | null = null;
-  compareRoad: FilteredRoad | null = null;
   selectedType = "";
   selectedTier = "";
   roadTypes = ROAD_TYPES;
@@ -155,11 +154,6 @@ class MapsStore {
     this.selectedRoad = road;
   }
 
-  toggleCompare(road: FilteredRoad) {
-    this.compareRoad = this.compareRoad?.name === road.name ? null : road;
-  }
-
-  // Normalize function to treat '-' and spaces as the same character while keeping spaces valid
   static normalizeString(str: string): string {
     return str.replace(/-/g, " ").toLowerCase();
   }
