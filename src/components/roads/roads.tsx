@@ -2,7 +2,8 @@ import { observer } from "mobx-react-lite";
 import { mapsStore } from "../../stores/maps";
 import { waifuStore } from "../../stores/waifu";
 import { darkModeStore } from "../../stores/darkmode";
-import type { RoadComponent } from "../../types/road";
+import { favoritesStore } from "../../stores/favoritesStore";
+import type { RoadComponent, Road } from "../../types/road";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { debounce } from "../../utils/debounce";
 
@@ -110,6 +111,28 @@ const Roads = observer(() => {
           <div className="text-6xl mb-4">🗺️</div>
           <p className="text-lg">Start typing to search for Avalonian Roads</p>
           <p className="text-sm mt-2 opacity-75">Search by road name to see details</p>
+          {favoritesStore.favorites.length > 0 && (
+            <div className="mt-4">
+              <h3 className="text-md font-bold mb-2">Favorites</h3>
+              <div className="flex flex-wrap gap-1">
+                {favoritesStore.favorites.map((fav) => (
+                  <button
+                    key={fav.name}
+                    onClick={() => {
+                      setInputValue(fav.name);
+                      setSelectedIndex(0);
+                      debouncedSetTextField(fav.name);
+                    }}
+                    className="px-2 py-1 text-xs rounded bg-pink-400 dark:bg-zinc-600 hover:bg-pink-500 dark:hover:bg-zinc-500"
+                  >
+                    {fav.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
         </div>
       )}
 
@@ -155,6 +178,17 @@ const Roads = observer(() => {
                   title="Copy road name"
                 >
                   {copied ? "Copied!" : "Copy"}
+                </button>
+                <button
+                  onClick={() => favoritesStore.toggleFavorite(mapsStore.selectedRoad as Road)}
+                  className={`px-2 py-1 text-xs rounded transition-colors ${
+                    favoritesStore.isFavorite(mapsStore.selectedRoad.name)
+                      ? "bg-yellow-400 dark:bg-yellow-600"
+                      : "bg-pink-400 dark:bg-zinc-600 hover:bg-pink-500 dark:hover:bg-zinc-500"
+                  }`}
+                  title={favoritesStore.isFavorite(mapsStore.selectedRoad.name) ? "Remove from favorites" : "Add to favorites"}
+                >
+                  {favoritesStore.isFavorite(mapsStore.selectedRoad.name) ? "★" : "☆"}
                 </button>
               </div>
               <p>
