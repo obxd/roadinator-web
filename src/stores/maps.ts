@@ -4,6 +4,8 @@ import mapList from "../assets/mapList.json";
 import type { Road, FilteredRoad } from "../types/road";
 
 const MAX_FILTERED = 15;
+const MAX_RECENT = 10;
+const RECENT_KEY = "recentSearches";
 
 const ROAD_TYPES = Array.from(
   new Set((mapList as Road[]).map((r) => r.data.type))
@@ -21,6 +23,7 @@ class MapsStore {
   selectedTier = "";
   roadTypes = ROAD_TYPES;
   roadTiers = ROAD_TIERS;
+  recentSearches: string[] = [];
   private fzf: Fzf<Road>;
   private allRoads: Road[];
 
@@ -30,6 +33,38 @@ class MapsStore {
     this.fzf = new Fzf(this.allRoads, {
       selector: (item) => MapsStore.normalizeString(item.name),
     });
+    this.loadRecentSearches();
+  }
+
+  private loadRecentSearches() {
+    try {
+      const stored = localStorage.getItem(RECENT_KEY);
+      if (stored) {
+        this.recentSearches = JSON.parse(stored);
+      }
+    } catch {
+      this.recentSearches = [];
+    }
+  }
+
+  private saveRecentSearches() {
+    localStorage.setItem(RECENT_KEY, JSON.stringify(this.recentSearches));
+  }
+
+  addRecentSearch(term: string) {
+    const normalized = term.trim();
+    if (!normalized) return;
+    
+    this.recentSearches = [
+      normalized,
+      ...this.recentSearches.filter((s) => s !== normalized),
+    ].slice(0, MAX_RECENT);
+    this.saveRecentSearches();
+  }
+
+  clearRecentSearches() {
+    this.recentSearches = [];
+    localStorage.removeItem(RECENT_KEY);
   }
 
   setTypeFilter(type: string) {
@@ -74,6 +109,9 @@ class MapsStore {
 
   setTextField(value: string) {
     this.textField = value;
+    if (value.trim()) {
+      this.addRecentSearch(value.trim());
+    }
     this.applyFilters();
   }
 
