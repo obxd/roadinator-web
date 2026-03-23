@@ -37,7 +37,22 @@ const Roads = observer(() => {
         placeholder="Search roads..."
       />
 
-      {/* Results & Details Layout */}
+      {!mapsStore.textField && (
+        <div className="mt-8 text-center text-gray-600 dark:text-gray-400">
+          <div className="text-6xl mb-4">🗺️</div>
+          <p className="text-lg">Start typing to search for Avalonian Roads</p>
+          <p className="text-sm mt-2 opacity-75">Search by road name to see details</p>
+        </div>
+      )}
+
+      {mapsStore.textField && mapsStore.filteredResults.length === 0 && (
+        <div className="mt-8 text-center text-gray-600 dark:text-gray-400">
+          <div className="text-4xl mb-4">🔍</div>
+          <p className="text-lg">No roads found</p>
+          <p className="text-sm mt-2 opacity-75">Try a different search term</p>
+        </div>
+      )}
+
       {mapsStore.textField && mapsStore.filteredResults.length > 0 && (
         <div className="grid grid-cols-2 gap-4 mt-4">
           {/* Left Column: Search Results */}
