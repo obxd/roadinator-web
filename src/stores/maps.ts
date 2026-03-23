@@ -4,11 +4,16 @@ import mapList from "../assets/mapList.json";
 import type { Road, FilteredRoad } from "../types/road";
 
 const MAX_FILTERED = 15;
+const MAX_HISTORY = 10;
+const SEARCH_HISTORY_KEY = "roadinator_search_history";
+const ROAD_HISTORY_KEY = "roadinator_road_history";
 
 class MapsStore {
   textField = "";
   filteredResults: FilteredRoad[] = [];
   selectedRoad: FilteredRoad | null = null;
+  searchHistory: string[] = [];
+  roadHistory: string[] = [];
   private fzf: Fzf<Road[]>;
   private allRoads: Road[];
 
@@ -18,6 +23,59 @@ class MapsStore {
     this.fzf = new Fzf(this.allRoads, {
       selector: (item) => MapsStore.normalizeString(item.name),
     });
+    this.loadHistory();
+  }
+
+  private loadHistory() {
+    try {
+      const searchHistory = localStorage.getItem(SEARCH_HISTORY_KEY);
+      if (searchHistory) this.searchHistory = JSON.parse(searchHistory);
+    } catch {
+      this.searchHistory = [];
+    }
+    try {
+      const roadHistory = localStorage.getItem(ROAD_HISTORY_KEY);
+      if (roadHistory) this.roadHistory = JSON.parse(roadHistory);
+    } catch {
+      this.roadHistory = [];
+    }
+  }
+
+  private saveSearchHistory() {
+    localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(this.searchHistory));
+  }
+
+  private saveRoadHistory() {
+    localStorage.setItem(ROAD_HISTORY_KEY, JSON.stringify(this.roadHistory));
+  }
+
+  addSearchHistory(term: string) {
+    const normalized = term.trim();
+    if (!normalized) return;
+    this.searchHistory = [
+      normalized,
+      ...this.searchHistory.filter((s) => s !== normalized),
+    ].slice(0, MAX_HISTORY);
+    this.saveSearchHistory();
+  }
+
+  addRoadHistory(roadName: string) {
+    if (!roadName) return;
+    this.roadHistory = [
+      roadName,
+      ...this.roadHistory.filter((r) => r !== roadName),
+    ].slice(0, MAX_HISTORY);
+    this.saveRoadHistory();
+  }
+
+  clearSearchHistory() {
+    this.searchHistory = [];
+    localStorage.removeItem(SEARCH_HISTORY_KEY);
+  }
+
+  clearRoadHistory() {
+    this.roadHistory = [];
+    localStorage.removeItem(ROAD_HISTORY_KEY);
   }
 
   private applyFilters() {
@@ -47,11 +105,15 @@ class MapsStore {
 
   setTextField(value: string) {
     this.textField = value;
+    if (value.trim()) {
+      this.addSearchHistory(value.trim());
+    }
     this.applyFilters();
   }
 
   selectRoad(road: FilteredRoad) {
     this.selectedRoad = road;
+    this.addRoadHistory(road.name);
   }
 
   static normalizeString(str: string): string {

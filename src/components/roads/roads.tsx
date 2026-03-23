@@ -186,6 +186,69 @@ const Roads = observer(() => {
           )}
         </div>
       )}
+
+      {(mapsStore.searchHistory.length > 0 || mapsStore.roadHistory.length > 0) && (
+        <div className="mt-6 pt-4 border-t border-pink-400 dark:border-zinc-700">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {mapsStore.searchHistory.length > 0 && (
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300">Recent Searches</h3>
+                  <button
+                    onClick={() => mapsStore.clearSearchHistory()}
+                    className="text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-400"
+                  >
+                    Clear
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {mapsStore.searchHistory.map((term) => (
+                    <button
+                      key={term}
+                      onClick={() => {
+                        setInputValue(term);
+                        setSelectedIndex(0);
+                        mapsStore.setTextField(term);
+                      }}
+                      className="px-2 py-1 text-xs rounded bg-pink-400 dark:bg-zinc-700 hover:bg-pink-500 dark:hover:bg-zinc-600 transition-colors"
+                    >
+                      {term}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {mapsStore.roadHistory.length > 0 && (
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300">Recent Roads</h3>
+                  <button
+                    onClick={() => mapsStore.clearRoadHistory()}
+                    className="text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-400"
+                  >
+                    Clear
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {mapsStore.roadHistory.map((name) => (
+                    <button
+                      key={name}
+                      onClick={() => {
+                        setInputValue(name);
+                        setSelectedIndex(0);
+                        mapsStore.setTextField(name);
+                      }}
+                      className="px-2 py-1 text-xs rounded bg-pink-400 dark:bg-zinc-700 hover:bg-pink-500 dark:hover:bg-zinc-600 transition-colors"
+                    >
+                      {name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 });
