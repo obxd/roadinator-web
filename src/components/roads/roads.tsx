@@ -3,8 +3,25 @@ import { mapsStore } from "../../stores/maps";
 import { waifuStore } from "../../stores/waifu";
 import { darkModeStore } from "../../stores/darkmode";
 import type { RoadComponent } from "../../types/road";
+import { useState, useEffect, useCallback } from "react";
+import { debounce } from "../../utils/debounce";
 
 const Roads = observer(() => {
+  const [inputValue, setInputValue] = useState(mapsStore.textField);
+  
+  const debouncedSetTextField = useCallback(
+    debounce((value: string) => {
+      mapsStore.setTextField(value);
+    }, 200),
+    []
+  );
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputValue(value);
+    debouncedSetTextField(value);
+  };
+
   return (
     <div
       className={`${
@@ -12,11 +29,10 @@ const Roads = observer(() => {
       } min-h-[70vh] p-4 ml-5 rounded-md shadow-md transition-all duration-300
       bg-pink-300 dark:bg-zinc-900 text-black dark:text-white`}
     >
-      {/* Search Input */}
       <input
         type="text"
-        value={mapsStore.textField}
-        onChange={(e) => mapsStore.setTextField(e.target.value)}
+        value={inputValue}
+        onChange={handleInputChange}
         className="w-full p-2 border rounded-md bg-white dark:bg-zinc-800 dark:text-white"
         placeholder="Search roads..."
       />
