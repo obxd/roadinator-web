@@ -11,7 +11,6 @@ const Roads = observer(() => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [copied, setCopied] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const modalRef = useRef<HTMLDivElement>(null);
 
   const debouncedSetTextField = useCallback(
     debounce((value: string) => {
@@ -95,12 +94,6 @@ const Roads = observer(() => {
       }
     }
   }, []);
-
-  useEffect(() => {
-    if (mapsStore.selectedRoad && modalRef.current) {
-      modalRef.current.focus();
-    }
-  }, [mapsStore.selectedRoad?.name]);
 
   return (
     <div
@@ -239,9 +232,7 @@ const Roads = observer(() => {
 
           {mapsStore.selectedRoad && (
             <div 
-              ref={modalRef}
-              tabIndex={-1}
-              className="p-4 rounded-md shadow-md bg-pink-200 dark:bg-zinc-800 outline-none focus:ring-2 focus:ring-pink-500" 
+              className="p-4 rounded-md shadow-md bg-pink-200 dark:bg-zinc-800" 
               role="region" 
               aria-label="Selected road details"
             >
