@@ -95,62 +95,11 @@ const Roads = observer(() => {
         aria-label="Search for Avalonian roads"
       />
 
-      <div className="flex flex-wrap gap-2 mt-2">
-        <select
-          value={mapsStore.selectedType}
-          onChange={(e) => mapsStore.setTypeFilter(e.target.value)}
-          className="px-2 py-1 text-sm rounded bg-white dark:bg-zinc-800 dark:text-white border"
-          aria-label="Filter by road type"
-        >
-          <option value="">All Types</option>
-          {mapsStore.roadTypes.map((type) => (
-            <option key={type} value={type}>{type}</option>
-          ))}
-        </select>
-        <select
-          value={mapsStore.selectedTier}
-          onChange={(e) => mapsStore.setTierFilter(e.target.value)}
-          className="px-2 py-1 text-sm rounded bg-white dark:bg-zinc-800 dark:text-white border"
-          aria-label="Filter by road tier"
-        >
-          <option value="">All Tiers</option>
-          {mapsStore.roadTiers.map((tier) => (
-            <option key={tier} value={tier}>Tier {tier}</option>
-          ))}
-        </select>
-      </div>
-
       {!mapsStore.textField && (
         <div className="mt-8 text-center text-gray-600 dark:text-gray-400">
           <div className="text-6xl mb-4" role="img" aria-hidden="true">🗺️</div>
           <p className="text-lg">Start typing to search for Avalonian Roads</p>
           <p className="text-sm mt-2 opacity-75">Search by road name to see details</p>
-          {mapsStore.recentSearches.length > 0 && (
-            <div className="mt-4">
-              <h3 className="text-md font-bold mb-2">Recent searches</h3>
-              <div className="flex flex-wrap gap-1">
-                {mapsStore.recentSearches.map((term) => (
-                  <button
-                    key={term}
-                    onClick={() => {
-                      setInputValue(term);
-                      setSelectedIndex(0);
-                      debouncedSetTextField(term);
-                    }}
-                    className="px-2 py-1 text-xs text-gray-500 hover:bg-pink-300 dark:hover:bg-zinc-500 rounded"
-                  >
-                    {term}
-                  </button>
-                ))}
-              </div>
-              <button
-                onClick={() => mapsStore.clearRecentSearches()}
-                className="px-2 py-1 text-xs text-gray-500 mt-2"
-              >
-                Clear
-              </button>
-            </div>
-          )}
         </div>
       )}
 
@@ -159,26 +108,6 @@ const Roads = observer(() => {
           <div className="text-4xl mb-4" role="img" aria-hidden="true">🔍</div>
           <p className="text-lg">No roads found</p>
           <p className="text-sm mt-2 opacity-75">Try a different search term</p>
-          
-          <div className="mt-4">
-            <h3 className="text-sm font-bold mb-2">Filter by resources:</h3>
-            <div className="flex flex-wrap gap-1">
-              {mapsStore.resourceTypes.map((resource) => (
-                <button
-                  key={resource}
-                  onClick={() => mapsStore.toggleResourceFilter(resource)}
-                  className={`px-2 py-1 text-xs rounded transition-colors ${
-                    mapsStore.selectedResources.includes(resource)
-                      ? "bg-pink-500 dark:bg-zinc-500 text-white"
-                      : "bg-pink-400 dark:bg-zinc-600 hover:bg-pink-500 dark:hover:bg-zinc-500"
-                  }`}
-                  aria-pressed={mapsStore.selectedResources.includes(resource)}
-                >
-                  {resource}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
       )}
 

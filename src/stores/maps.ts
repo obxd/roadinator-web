@@ -4,28 +4,11 @@ import mapList from "../assets/mapList.json";
 import type { Road, FilteredRoad } from "../types/road";
 
 const MAX_FILTERED = 15;
-const MAX_RECENT = 10;
-const RECENT_KEY = "recentSearches";
-
-const ROAD_TYPES = Array.from(
-  new Set((mapList as Road[]).map((r) => r.data.type))
-).sort();
-
-const ROAD_TIERS = Array.from(
-  new Set((mapList as Road[]).map((r) => r.data.tier))
-).sort();
 
 class MapsStore {
   textField = "";
   filteredResults: FilteredRoad[] = [];
   selectedRoad: FilteredRoad | null = null;
-  selectedType = "";
-  selectedTier = "";
-  roadTypes = ROAD_TYPES;
-  roadTiers = ROAD_TIERS;
-  recentSearches: string[] = [];
-  resourceTypes: string[] = [];
-  selectedResources: string[] = [];
   private fzf: Fzf<Road[]>;
   private allRoads: Road[];
 
@@ -35,70 +18,6 @@ class MapsStore {
     this.fzf = new Fzf(this.allRoads, {
       selector: (item) => MapsStore.normalizeString(item.name),
     });
-    this.loadRecentSearches();
-    this.loadResourceTypes();
-  }
-
-  private loadResourceTypes() {
-    const types = new Set<string>();
-    this.allRoads.forEach((road) => {
-      if (road.data.components) {
-        road.data.components.forEach((comp) => {
-          types.add(comp.type);
-        });
-      }
-    });
-    this.resourceTypes = Array.from(types).sort();
-  }
-
-  private loadRecentSearches() {
-    try {
-      const stored = localStorage.getItem(RECENT_KEY);
-      if (stored) {
-        this.recentSearches = JSON.parse(stored);
-      }
-    } catch {
-      this.recentSearches = [];
-    }
-  }
-
-  private saveRecentSearches() {
-    localStorage.setItem(RECENT_KEY, JSON.stringify(this.recentSearches));
-  }
-
-  addRecentSearch(term: string) {
-    const normalized = term.trim();
-    if (!normalized) return;
-
-    this.recentSearches = [
-      normalized,
-      ...this.recentSearches.filter((s) => s !== normalized),
-    ].slice(0, MAX_RECENT);
-    this.saveRecentSearches();
-  }
-
-  clearRecentSearches() {
-    this.recentSearches = [];
-    localStorage.removeItem(RECENT_KEY);
-  }
-
-  toggleResourceFilter(resource: string) {
-    if (this.selectedResources.includes(resource)) {
-      this.selectedResources = this.selectedResources.filter((r) => r !== resource);
-    } else {
-      this.selectedResources = [...this.selectedResources, resource];
-    }
-    this.applyFilters();
-  }
-
-  setTypeFilter(type: string) {
-    this.selectedType = type;
-    this.applyFilters();
-  }
-
-  setTierFilter(tier: string) {
-    this.selectedTier = tier;
-    this.applyFilters();
   }
 
   private applyFilters() {
@@ -109,29 +28,13 @@ class MapsStore {
     }
 
     const normalizedSearch = MapsStore.normalizeString(this.textField);
-    let results = this.fzf.find(normalizedSearch).map((res) => {
+    const results = this.fzf.find(normalizedSearch).map((res) => {
       const item = res.item as Road;
       return {
         ...item,
         matches: Array.from(res.positions),
       };
     });
-
-    if (this.selectedType) {
-      results = results.filter((r) => r.data.type === this.selectedType);
-    }
-
-    if (this.selectedTier) {
-      results = results.filter((r) => r.data.tier === this.selectedTier);
-    }
-
-    if (this.selectedResources.length > 0) {
-      results = results.filter((r) =>
-        r.data.components?.some((c: { type: string }) =>
-          this.selectedResources.includes(c.type)
-        )
-      );
-    }
 
     this.filteredResults = results.slice(0, MAX_FILTERED);
 
@@ -144,9 +47,6 @@ class MapsStore {
 
   setTextField(value: string) {
     this.textField = value;
-    if (value.trim()) {
-      this.addRecentSearch(value.trim());
-    }
     this.applyFilters();
   }
 
