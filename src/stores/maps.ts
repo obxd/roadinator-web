@@ -19,11 +19,14 @@ class MapsStore {
   textField = "";
   filteredResults: FilteredRoad[] = [];
   selectedRoad: FilteredRoad | null = null;
+  compareRoad: FilteredRoad | null = null;
   selectedType = "";
   selectedTier = "";
   roadTypes = ROAD_TYPES;
   roadTiers = ROAD_TIERS;
   recentSearches: string[] = [];
+  resourceTypes: string[] = [];
+  selectedResources: string[] = [];
   private fzf: Fzf<Road>;
   private allRoads: Road[];
 
@@ -34,6 +37,19 @@ class MapsStore {
       selector: (item) => MapsStore.normalizeString(item.name),
     });
     this.loadRecentSearches();
+    this.loadResourceTypes();
+  }
+
+  private loadResourceTypes() {
+    const types = new Set<string>();
+    this.allRoads.forEach((road) => {
+      if (road.data.components) {
+        road.data.components.forEach((comp) => {
+          types.add(comp.type);
+        });
+      }
+    });
+    this.resourceTypes = Array.from(types).sort();
   }
 
   private loadRecentSearches() {
@@ -54,7 +70,7 @@ class MapsStore {
   addRecentSearch(term: string) {
     const normalized = term.trim();
     if (!normalized) return;
-    
+
     this.recentSearches = [
       normalized,
       ...this.recentSearches.filter((s) => s !== normalized),
@@ -65,6 +81,15 @@ class MapsStore {
   clearRecentSearches() {
     this.recentSearches = [];
     localStorage.removeItem(RECENT_KEY);
+  }
+
+  toggleResourceFilter(resource: string) {
+    if (this.selectedResources.includes(resource)) {
+      this.selectedResources = this.selectedResources.filter((r) => r !== resource);
+    } else {
+      this.selectedResources = [...this.selectedResources, resource];
+    }
+    this.applyFilters();
   }
 
   setTypeFilter(type: string) {
@@ -98,6 +123,14 @@ class MapsStore {
       results = results.filter((r) => r.data.tier === this.selectedTier);
     }
 
+    if (this.selectedResources.length > 0) {
+      results = results.filter((r) =>
+        r.data.components?.some((c) =>
+          this.selectedResources.includes(c.type)
+        )
+      );
+    }
+
     this.filteredResults = results.slice(0, MAX_FILTERED);
 
     if (this.filteredResults.length > 0) {
@@ -117,6 +150,14 @@ class MapsStore {
 
   selectRoad(road: FilteredRoad) {
     this.selectedRoad = road;
+  }
+
+  toggleCompareMode() {
+    this.compareRoad = this.compareRoad ? null : road : road;
+  }
+
+  clearComparison() {
+    this.compareRoad = null;
   }
 
   // Normalize function to treat '-' and spaces as the same character while keeping spaces valid
