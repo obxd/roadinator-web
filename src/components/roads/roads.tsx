@@ -25,8 +25,8 @@ const Roads = observer(() => {
   return (
     <div
       className={`${
-        waifuStore.isWaifuOn ? "w-[65%]" : "w-[95%]"
-      } min-h-[70vh] p-4 ml-5 rounded-md shadow-md transition-all duration-300
+        waifuStore.isWaifuOn ? "lg:w-[65%] w-full" : "w-full lg:w-[95%]"
+      } min-h-[70vh] p-2 md:p-4 lg:ml-5 rounded-md shadow-md transition-all duration-300
       bg-pink-300 dark:bg-zinc-900 text-black dark:text-white`}
     >
       <input
@@ -54,7 +54,7 @@ const Roads = observer(() => {
       )}
 
       {mapsStore.textField && mapsStore.filteredResults.length > 0 && (
-        <div className="grid grid-cols-2 gap-4 mt-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
           {/* Left Column: Search Results */}
           <ul className="p-2 rounded-md bg-pink-400 dark:bg-zinc-700">
             {mapsStore.filteredResults.map((road) => (

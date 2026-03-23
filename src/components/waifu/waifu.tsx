@@ -8,7 +8,7 @@ const Waifu = observer(() => {
   }, []);
 
   return (
-    <div className="absolute bottom-5 right-5 z-10 w-1/3 max-w-[30%] cursor-pointer ">
+    <div className="hidden lg:block absolute bottom-5 right-5 z-10 lg:w-1/3 lg:max-w-[30%] cursor-pointer">
       {waifuStore.isWaifuOn && waifuStore.loading && <p>Loading...</p>}
       {waifuStore.isWaifuOn && !waifuStore.loading && (
         <img
