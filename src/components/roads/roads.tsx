@@ -40,7 +40,7 @@ const Roads = observer(() => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = a.filename = `roads_export_${new Date().toISOString().replace(/:/g, "_")}.json`;
+    a.download = `roads_export_${new Date().toISOString().replace(/:/g, "_")}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -238,11 +238,12 @@ const Roads = observer(() => {
                   onClick={() => handleCopyName(mapsStore.selectedRoad!.name)}
                   className="px-2 py-1 text-xs rounded bg-pink-400 dark:bg-zinc-600 
                            hover:bg-pink-500 dark:hover:bg-zinc-500 transition-colors"
-                  aria-label="Copy road name to                >
+                  aria-label="Copy road name to clipboard"
+                >
                   {copied ? "Copied!" : "Copy"}
                 </button>
                 <button
-                  onClick={() => mapsStore.toggleCompare(mapsStore.selectedRoad)}
+                  onClick={() => mapsStore.toggleCompare(mapsStore.selectedRoad!)}
                   className="px-2 py-1 text-xs rounded bg-pink-400 dark:bg-zinc-600 
                            hover:bg-pink-500 dark:hover:bg-zinc-500"
                   aria-label="Add to comparison"

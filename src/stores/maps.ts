@@ -27,7 +27,7 @@ class MapsStore {
   recentSearches: string[] = [];
   resourceTypes: string[] = [];
   selectedResources: string[] = [];
-  private fzf: Fzf<Road>;
+  private fzf: Fzf<Road[]>;
   private allRoads: Road[];
 
   constructor() {
@@ -110,10 +110,13 @@ class MapsStore {
     }
 
     const normalizedSearch = MapsStore.normalizeString(this.textField);
-    let results = this.fzf.find(normalizedSearch).map((res) => ({
-      ...res.item,
-      matches: res.positions,
-    }));
+    let results = this.fzf.find(normalizedSearch).map((res) => {
+      const item = res.item as Road;
+      return {
+        ...item,
+        matches: Array.from(res.positions),
+      };
+    });
 
     if (this.selectedType) {
       results = results.filter((r) => r.data.type === this.selectedType);
@@ -125,7 +128,7 @@ class MapsStore {
 
     if (this.selectedResources.length > 0) {
       results = results.filter((r) =>
-        r.data.components?.some((c) =>
+        r.data.components?.some((c: { type: string }) =>
           this.selectedResources.includes(c.type)
         )
       );
@@ -152,17 +155,13 @@ class MapsStore {
     this.selectedRoad = road;
   }
 
-  toggleCompareMode() {
-    this.compareRoad = this.compareRoad ? null : road : road;
-  }
-
-  clearComparison() {
-    this.compareRoad = null;
+  toggleCompare(road: FilteredRoad) {
+    this.compareRoad = this.compareRoad?.name === road.name ? null : road;
   }
 
   // Normalize function to treat '-' and spaces as the same character while keeping spaces valid
   static normalizeString(str: string): string {
-    return str.replace(/-/g, " ").toLowerCase(); // Replace dashes with spaces but keep existing spaces
+    return str.replace(/-/g, " ").toLowerCase();
   }
 }
 
