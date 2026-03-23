@@ -9,6 +9,7 @@ import { debounce } from "../../utils/debounce";
 const Roads = observer(() => {
   const [inputValue, setInputValue] = useState(mapsStore.textField);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [copied, setCopied] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   
   const debouncedSetTextField = useCallback(
@@ -17,6 +18,16 @@ const Roads = observer(() => {
     }, 200),
     []
   );
+
+  const handleCopyName = useCallback(async (name: string) => {
+    try {
+      await navigator.clipboard.writeText(name);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      console.error("Failed to copy");
+    }
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -112,7 +123,17 @@ const Roads = observer(() => {
           {/* Right Column: Selected Road Details */}
           {mapsStore.selectedRoad && (
             <div className="p-4 rounded-md shadow-md bg-pink-200 dark:bg-zinc-800">
-              <h2 className="text-xl font-bold">{mapsStore.selectedRoad.name}</h2>
+              <div className="flex items-center gap-2">
+                <h2 className="text-xl font-bold">{mapsStore.selectedRoad.name}</h2>
+                <button
+                  onClick={() => handleCopyName(mapsStore.selectedRoad!.name)}
+                  className="px-2 py-1 text-xs rounded bg-pink-400 dark:bg-zinc-600 
+                           hover:bg-pink-500 dark:hover:bg-zinc-500 transition-colors"
+                  title="Copy road name"
+                >
+                  {copied ? "Copied!" : "Copy"}
+                </button>
+              </div>
               <p>
                 <strong>Road type:</strong> {mapsStore.selectedRoad.data.type}
               </p>
