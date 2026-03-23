@@ -52,6 +52,8 @@ const Roads = observer(() => {
       const selectedRoad = mapsStore.filteredResults[selectedIndex];
       if (selectedRoad) {
         mapsStore.selectRoad(selectedRoad);
+        mapsStore.addRoadHistory(selectedRoad.name);
+        mapsStore.addSearchHistory(mapsStore.textField.trim());
       }
     }
   }, [mapsStore.filteredResults, selectedIndex]);
@@ -125,6 +127,8 @@ const Roads = observer(() => {
                 onClick={() => {
                   setSelectedIndex(index);
                   mapsStore.selectRoad(road);
+                  mapsStore.addRoadHistory(road.name);
+                  mapsStore.addSearchHistory(mapsStore.textField.trim());
                 }}
               >
                 {highlightText(road.name, road.matches)}

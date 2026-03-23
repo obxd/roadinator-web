@@ -105,15 +105,11 @@ class MapsStore {
 
   setTextField(value: string) {
     this.textField = value;
-    if (value.trim()) {
-      this.addSearchHistory(value.trim());
-    }
     this.applyFilters();
   }
 
   selectRoad(road: FilteredRoad) {
     this.selectedRoad = road;
-    this.addRoadHistory(road.name);
   }
 
   static normalizeString(str: string): string {
