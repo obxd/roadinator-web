@@ -3,11 +3,13 @@ import { mapsStore } from "../../stores/maps";
 import { waifuStore } from "../../stores/waifu";
 import { darkModeStore } from "../../stores/darkmode";
 import type { RoadComponent } from "../../types/road";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { debounce } from "../../utils/debounce";
 
 const Roads = observer(() => {
   const [inputValue, setInputValue] = useState(mapsStore.textField);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const inputRef = useRef<HTMLInputElement>(null);
   
   const debouncedSetTextField = useCallback(
     debounce((value: string) => {
@@ -19,8 +21,38 @@ const Roads = observer(() => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);
+    setSelectedIndex(0);
     debouncedSetTextField(value);
   };
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (mapsStore.filteredResults.length === 0) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex((prev) => 
+        prev < mapsStore.filteredResults.length - 1 ? prev + 1 : prev
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : 0));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      const selectedRoad = mapsStore.filteredResults[selectedIndex];
+      if (selectedRoad) {
+        mapsStore.selectRoad(selectedRoad);
+      }
+    }
+  }, [mapsStore.filteredResults, selectedIndex]);
+
+  useEffect(() => {
+    if (mapsStore.filteredResults.length > 0 && mapsStore.selectedRoad) {
+      const idx = mapsStore.filteredResults.findIndex(
+        (r) => r.name === mapsStore.selectedRoad?.name
+      );
+      if (idx !== -1) setSelectedIndex(idx);
+    }
+  }, [mapsStore.selectedRoad, mapsStore.filteredResults]);
 
   return (
     <div
@@ -30,9 +62,11 @@ const Roads = observer(() => {
       bg-pink-300 dark:bg-zinc-900 text-black dark:text-white`}
     >
       <input
+        ref={inputRef}
         type="text"
         value={inputValue}
         onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
         className="w-full p-2 border rounded-md bg-white dark:bg-zinc-800 dark:text-white"
         placeholder="Search roads..."
       />
@@ -57,11 +91,18 @@ const Roads = observer(() => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
           {/* Left Column: Search Results */}
           <ul className="p-2 rounded-md bg-pink-400 dark:bg-zinc-700">
-            {mapsStore.filteredResults.map((road) => (
+            {mapsStore.filteredResults.map((road, index) => (
               <li
                 key={road.name}
-                className="p-2 border-b cursor-pointer hover:bg-pink-500 dark:hover:bg-zinc-600"
-                onClick={() => mapsStore.selectRoad(road)}
+                className={`p-2 border-b cursor-pointer transition-colors ${
+                  index === selectedIndex
+                    ? "bg-pink-600 dark:bg-zinc-500"
+                    : "hover:bg-pink-500 dark:hover:bg-zinc-600"
+                }`}
+                onClick={() => {
+                  setSelectedIndex(index);
+                  mapsStore.selectRoad(road);
+                }}
               >
                 {highlightText(road.name, road.matches)}
               </li>
