@@ -1,75 +1,49 @@
-import { observer } from "mobx-react-lite";
-import { mapsStore } from "../../stores/maps";
-import { waifuStore } from "../../stores/waifu";
-import { darkModeStore } from "../../stores/darkmode";
-import { favoritesStore } from "../../stores/favoritesStore";
-import type { RoadComponent, Road } from "../../types/road";
-import { useState, useEffect, useCallback, useRef } from "react";
-import { debounce } from "../../utils/debounce";
-
-const Roads = observer(() => {
-  const [inputValue, setInputValue] = useState(mapsStore.textField);
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [copied, setCopied] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  
-  const debouncedSetTextField = useCallback(
-    debounce((value: string) => {
-      mapsStore.setTextField(value);
-    }, 200),
-    []
-  );
-
-  const handleCopyName = useCallback(async (name: string) => {
-    try {
-      await navigator.clipboard.writeText(name);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch {
-      console.error("Failed to copy");
-    }
-  }, []);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setInputValue(value);
-    setSelectedIndex(0);
-    debouncedSetTextField(value);
-  };
-
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (mapsStore.filteredResults.length === 0) return;
-
+    if (mapsStore.filteredResults.length === 0) return
     if (e.key === "ArrowDown") {
-      e.preventDefault();
+      e.preventDefault()
       setSelectedIndex((prev) => 
         prev < mapsStore.filteredResults.length - 1 ? prev + 1 : prev
-      );
+46:       }
     } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : 0));
+      e.preventDefault()
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : 0)
     } else if (e.key === "Enter") {
-      e.preventDefault();
-      const selectedRoad = mapsStore.filteredResults[selectedIndex];
+      e.preventDefault()
+      const selectedRoad = mapsStore.filteredResults[selectedIndex]
       if (selectedRoad) {
         mapsStore.selectRoad(selectedRoad);
       }
     }
-  }, [mapsStore.filteredResults, selectedIndex]);
+  }, [mapsStore.filteredResults, selectedIndex])
 
   useEffect(() => {
     if (mapsStore.filteredResults.length > 0 && mapsStore.selectedRoad) {
       const idx = mapsStore.filteredResults.findIndex(
         (r) => r.name === mapsStore.selectedRoad?.name
-      );
-      if (idx !== -1) setSelectedIndex(idx);
+      )
+      if (idx !== -1) setSelectedIndex(idx)
     }
-  }, [mapsStore.selectedRoad, mapsStore.filteredResults]);
+  }, [mapsStore.selectedRoad, mapsStore.filteredResults])
+
+  useEffect(() => {
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+      const roadName = decodeURIComponent(hash.slice(1));
+      if (roadName) {
+        setInputValue(roadName);
+        setSelectedIndex(0);
+        debouncedSetTextField(roadName);
+      }
+    }
+  }, [mapsStore.textField, mapsStore.selectedRoad]);
 
   return (
     <div
       className={`${
         waifuStore.isWaifuOn ? "lg:w-[65%] w-full" : "w-full lg:w-[95%]"
+      } else {
+        "w-full lg:w-[95%]"
       } min-h-[70vh] p-2 md:p-4 lg:ml-5 rounded-md shadow-md transition-all duration-300
       bg-pink-300 dark:bg-zinc-900 text-black dark:text-white`}
     >
@@ -111,28 +85,32 @@ const Roads = observer(() => {
           <div className="text-6xl mb-4">🗺️</div>
           <p className="text-lg">Start typing to search for Avalonian Roads</p>
           <p className="text-sm mt-2 opacity-75">Search by road name to see details</p>
-          {favoritesStore.favorites.length > 0 && (
+          {mapsStore.recentSearches.length > 0 && (
             <div className="mt-4">
-              <h3 className="text-md font-bold mb-2">Favorites</h3>
+              <h3 className="text-md font-bold mb-2">Recent searches</h3>
               <div className="flex flex-wrap gap-1">
-                {favoritesStore.favorites.map((fav) => (
+                {mapsStore.recentSearches.map((term) => (
                   <button
-                    key={fav.name}
+                    key={term}
                     onClick={() => {
-                      setInputValue(fav.name);
+                      setInputValue(term);
                       setSelectedIndex(0);
-                      debouncedSetTextField(fav.name);
+                      debouncedSetTextField(term);
                     }}
-                    className="px-2 py-1 text-xs rounded bg-pink-400 dark:bg-zinc-600 hover:bg-pink-500 dark:hover:bg-zinc-500"
+                    className="px-2 py-1 text-xs text-gray-500 hover:bg-pink-300 dark:hover:bg-zinc-500 rounded"
                   >
-                    {fav.name}
+                    {term}
                   </button>
                 ))}
               </div>
+              <button
+                onClick={() => mapsStore.clearRecentSearches()}
+                className="px-2 py-1 text-xs text-gray-500 mt-2"
+              >
+                Clear
+              </button>
             </div>
           )}
-        </div>
-      )}
         </div>
       )}
 
@@ -179,17 +157,6 @@ const Roads = observer(() => {
                 >
                   {copied ? "Copied!" : "Copy"}
                 </button>
-                <button
-                  onClick={() => favoritesStore.toggleFavorite(mapsStore.selectedRoad as Road)}
-                  className={`px-2 py-1 text-xs rounded transition-colors ${
-                    favoritesStore.isFavorite(mapsStore.selectedRoad.name)
-                      ? "bg-yellow-400 dark:bg-yellow-600"
-                      : "bg-pink-400 dark:bg-zinc-600 hover:bg-pink-500 dark:hover:bg-zinc-500"
-                  }`}
-                  title={favoritesStore.isFavorite(mapsStore.selectedRoad.name) ? "Remove from favorites" : "Add to favorites"}
-                >
-                  {favoritesStore.isFavorite(mapsStore.selectedRoad.name) ? "★" : "☆"}
-                </button>
               </div>
               <p>
                 <strong>Road type:</strong> {mapsStore.selectedRoad.data.type}
@@ -231,56 +198,4 @@ const Roads = observer(() => {
       )}
     </div>
   );
-});
-
-// Function to sort components
-function getSortedComponents(components: RoadComponent[]) {
-  return [...components].sort((a, b) => {
-    // Prioritize "mistcity" first
-    if (a.type === "mistscity" && b.type !== "mistscity") return -1;
-    if (b.type === "mistscity" && a.type !== "mistscity") return 1;
-    // Otherwise, sort by type + bgcolor + size
-    return (a.type + a.bgcolor + a.size).localeCompare(b.type + b.bgcolor + b.size);
-  });
 }
-
-// Function to get row colors in light & dark mode
-function getRowColor(bgcolor: string, item_type: string) {
-  if (item_type === "mistscity")
-    return "bg-fuchsia-300 dark:bg-fuchsia-600 text-black dark:text-white"
-  switch (bgcolor.toLowerCase()) {
-    case "gold":
-      return "bg-yellow-300 dark:bg-yellow-600 text-black dark:text-white";
-    case "green":
-      return "bg-green-300 dark:bg-green-600 text-black dark:text-white";
-    case "blue":
-      return "bg-blue-300 dark:bg-blue-600 text-black dark:text-white";
-    default:
-      return "bg-transparent dark:bg-transparent";
-  }
-}
-
-// Function to highlight matched text in red (light mode) or pink (dark mode)
-function highlightText(text: string, matches: number[]) {
-  let highlightedText = [];
-  let matchSet = new Set(matches);
-  for (let i = 0; i < text.length; i++) {
-    highlightedText.push(
-      matchSet.has(i) ? (
-        <span
-          key={i}
-          className={`font-bold ${
-            darkModeStore.isDarkMode ? "text-pink-400" : "text-red-600"
-          }`}
-        >
-          {text[i]}
-        </span>
-      ) : (
-        text[i]
-      )
-    );
-  }
-  return highlightedText;
-}
-
-export default Roads;
