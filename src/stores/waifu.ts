@@ -29,7 +29,7 @@ class WaifuStore {
         this.waifu_url = waifuurl;
         this.loading = false;
       });
-    } catch (error) {
+    } catch {
       runInAction(() => {
         this.loading = false;
       });

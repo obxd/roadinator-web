@@ -2,6 +2,7 @@ import { observer } from "mobx-react-lite";
 import { mapsStore } from "../../stores/maps";
 import { waifuStore } from "../../stores/waifu";
 import { darkModeStore } from "../../stores/darkmode";
+import { favoritesStore } from "../../stores/favorites";
 import type { RoadComponent } from "../../types/road";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { debounce } from "../../utils/debounce";
@@ -119,7 +120,7 @@ const Roads = observer(() => {
             {mapsStore.filteredResults.map((road, index) => (
               <li
                 key={road.name}
-                className={`p-2 border-b cursor-pointer transition-colors ${
+                className={`p-2 border-b cursor-pointer transition-colors flex items-center justify-between ${
                   index === selectedIndex
                     ? "bg-pink-600 dark:bg-zinc-500"
                     : "hover:bg-pink-500 dark:hover:bg-zinc-600"
@@ -131,7 +132,21 @@ const Roads = observer(() => {
                   mapsStore.addSearchHistory(mapsStore.textField.trim());
                 }}
               >
-                {highlightText(road.name, road.matches)}
+                <span>{highlightText(road.name, road.matches)}</span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    favoritesStore.toggleFavorite(road);
+                  }}
+                  className={`ml-2 text-lg ${
+                    favoritesStore.isFavorite(road.name)
+                      ? "text-yellow-400"
+                      : "text-gray-400 hover:text-yellow-300"
+                  }`}
+                  aria-label={favoritesStore.isFavorite(road.name) ? "Remove from favorites" : "Add to favorites"}
+                >
+                  {favoritesStore.isFavorite(road.name) ? "★" : "☆"}
+                </button>
               </li>
             ))}
           </ul>
@@ -144,6 +159,17 @@ const Roads = observer(() => {
             >
               <div className="flex items-center gap-2">
                 <h2 className="text-xl font-bold">{mapsStore.selectedRoad.name}</h2>
+                <button
+                  onClick={() => favoritesStore.toggleFavorite(mapsStore.selectedRoad!)}
+                  className={`text-lg ${
+                    favoritesStore.isFavorite(mapsStore.selectedRoad.name)
+                      ? "text-yellow-400"
+                      : "text-gray-400 hover:text-yellow-300"
+                  }`}
+                  aria-label={favoritesStore.isFavorite(mapsStore.selectedRoad.name) ? "Remove from favorites" : "Add to favorites"}
+                >
+                  {favoritesStore.isFavorite(mapsStore.selectedRoad.name) ? "★" : "☆"}
+                </button>
                 <button
                   onClick={() => handleCopyName(mapsStore.selectedRoad!.name)}
                   className="px-2 py-1 text-xs rounded bg-pink-400 dark:bg-zinc-600 
@@ -253,6 +279,37 @@ const Roads = observer(() => {
           </div>
         </div>
       )}
+
+      {favoritesStore.favorites.length > 0 && (
+        <div className="mt-6 pt-4 border-t border-pink-400 dark:border-zinc-700">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300">
+              <span className="text-yellow-400 mr-1">★</span> Favorites
+            </h3>
+            <button
+              onClick={() => favoritesStore.clearFavorites()}
+              className="text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-400"
+            >
+              Clear
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-1">
+            {favoritesStore.favorites.map((road) => (
+              <button
+                key={road.name}
+                onClick={() => {
+                  setInputValue(road.name);
+                  setSelectedIndex(0);
+                  mapsStore.setTextField(road.name);
+                }}
+                className="px-2 py-1 text-xs rounded bg-yellow-100 dark:bg-yellow-900 hover:bg-yellow-200 dark:hover:bg-yellow-800 transition-colors text-black dark:text-yellow-100"
+              >
+                {road.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 });
@@ -281,8 +338,8 @@ function getRowColor(bgcolor: string, item_type: string) {
 }
 
 function highlightText(text: string, matches: number[]) {
-  let highlightedText = [];
-  let matchSet = new Set(matches);
+  const highlightedText = [];
+  const matchSet = new Set(matches);
   for (let i = 0; i < text.length; i++) {
     highlightedText.push(
       matchSet.has(i) ? (
